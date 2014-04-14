@@ -8,7 +8,7 @@ public class CurrentCityModel {
 
     String currentCity;
     String testCommit;
-
+    String anotherCommit;
 
 
     public CurrentCityModel() {
