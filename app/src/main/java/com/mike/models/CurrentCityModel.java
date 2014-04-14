@@ -7,9 +7,6 @@ public class CurrentCityModel {
 
 
     String currentCity;
-    String testCommit;
-    String anotherCommit;
-    String anoter;
 
 
     public CurrentCityModel() {
