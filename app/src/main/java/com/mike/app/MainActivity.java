@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.mike.backgroundtasks.BackgroundTask;
+
 /**
  * Created by MichaelHenry on 4/14/14.
  */
@@ -18,10 +21,14 @@ public class MainActivity extends ActionBarActivity {
     public static String SixthPartForecastCount = "5";
     public static final String SeventhPartApiKey = "8ecy7xxhuk7ydj2hqp6wstuy";
 
+    public static final String myDomainURL = "http://view-unlimited.com/jsontest/weatherjson";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new BackgroundTask(myDomainURL).execute();
 
     }
 
