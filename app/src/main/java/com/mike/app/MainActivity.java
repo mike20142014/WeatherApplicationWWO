@@ -28,6 +28,7 @@ public class MainActivity extends ActionBarActivity {
     Context context;
     HttpConnection mHttpConnection;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
