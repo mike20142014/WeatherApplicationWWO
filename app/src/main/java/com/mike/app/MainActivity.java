@@ -1,11 +1,14 @@
 package com.mike.app;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.mike.backgroundtasks.BackgroundTask;
+import com.mike.utils.HttpConnection;
 
 /**
  * Created by MichaelHenry on 4/14/14.
@@ -22,13 +25,30 @@ public class MainActivity extends ActionBarActivity {
     public static final String SeventhPartApiKey = "8ecy7xxhuk7ydj2hqp6wstuy";
 
     public static final String myDomainURL = "http://view-unlimited.com/jsontest/weatherjson";
+    Context context;
+    HttpConnection mHttpConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
 
-        new BackgroundTask(myDomainURL).execute();
+        //new BackgroundTask(this,myDomainURL).execute();
+
+        mHttpConnection = new HttpConnection();
+        if (mHttpConnection.isNetworkConnected(context)) {
+
+            Log.i("IS NETWORK : ", "YES");
+            new BackgroundTask(this, myDomainURL).execute();
+
+        } else {
+
+
+            Log.i("IS NETWORK : ", "NO");
+            return;
+
+        }
 
     }
 

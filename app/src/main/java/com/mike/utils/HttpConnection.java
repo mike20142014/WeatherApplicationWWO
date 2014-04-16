@@ -1,8 +1,12 @@
 package com.mike.utils;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -21,6 +25,8 @@ import java.io.InputStreamReader;
  * Created by MichaelHenry on 4/15/14.
  */
 public class HttpConnection {
+
+    //Context context;
 
     public void HttpConnectionUTIL(String someURL) {
 
@@ -55,6 +61,7 @@ public class HttpConnection {
             JSONObject mainJSONObject = new JSONObject(_response);
             Log.i("Some Data : ", mainJSONObject.toString());
 
+
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -63,6 +70,17 @@ public class HttpConnection {
 
         mHttpClient.getConnectionManager().shutdown();
 
+    }
+
+    public boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null) {
+            // There are no active networks.
+            Toast.makeText(context, "No Network", Toast.LENGTH_LONG).show();
+            return false;
+        } else
+            return true;
     }
 
     //Downloading some images
