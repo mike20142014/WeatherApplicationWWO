@@ -1,5 +1,7 @@
 package com.mike.models;
 
+import android.content.Context;
+
 /**
  * Created by MichaelHenry on 4/14/14.
  */
@@ -13,11 +15,17 @@ public class CurrentConditionModel {
     String windSpeed;
     String weatherIcon;
     String windDirection;
+    Context context;
 
-    public CurrentConditionModel() {
+    public CurrentConditionModel(Context context) {
+
+        super();
+        this.context = context;
     }
 
     public CurrentConditionModel(String feelsLike, String humidity, String observationTime, String temp, String value, String windSpeed, String weatherIcon) {
+
+        super();
         this.feelsLike = feelsLike;
         this.humidity = humidity;
         this.observationTime = observationTime;

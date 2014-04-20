@@ -1,5 +1,7 @@
 package com.mike.models;
 
+import android.content.Context;
+
 /**
  * Created by MichaelHenry on 4/14/14.
  */
@@ -8,31 +10,60 @@ public class EverydayWeatherModel {
     /**
      * For JSON array items NOT hourly!!But daily!!
      */
-    String sunRise;
-    String sunSet;
-    String moonRise;
-    String moonSet;
+    private String sunRise;
+    private String sunSet;
+    private String moonRise;
+    private String moonSet;
 
     /**
      * For JSON array items hourly
      */
-    String EverydayDate;
-    String EverydayMaxTempF;
-    String EverydayMinTempF;
-    String EverydayMaxTempC;
-    String EverydayMinTempC;
+    private String EverydayDate;
+    private String EverydayMaxTempF;
+    private String EverydayMinTempF;
+    private String EverydayMaxTempC;
+    private String EverydayMinTempC;
 
     /**
      * For JSON array items hourly
      */
-    String EverydayWeatherICON;
-    String EverydayHumidity;
-    String EverydayWindChillF;
-    String EverydayWeatherDescriptionValue;
-    String EverydayFeelsLike;
-    String EverydayDewPoint;
-    String EverydayWindDirection;
-    String EverydayTempF;
+    private String EverydayWeatherICON;
+    private String EverydayHumidity;
+    private String EverydayWindChillF;
+    private String EverydayWeatherDescriptionValue;
+    private String EverydayFeelsLike;
+    private String EverydayDewPoint;
+    private String EverydayWindDirection;
+    private String EverydayTempF;
+    private String EverydayWindSpeed;
+    Context context;
+
+    public EverydayWeatherModel(Context context) {
+        super();
+        this.context = context;
+    }
+
+    public EverydayWeatherModel(String url) {
+        super();
+        this.EverydayWeatherICON = url;
+    }
+
+    public EverydayWeatherModel(String sunRise, String sunSet, String moonRise, String moonSet) {
+
+        super();
+        this.sunRise = sunRise;
+        this.sunSet = sunSet;
+        this.moonRise = moonRise;
+        this.moonSet = moonSet;
+    }
+
+    public String getEverydayWindSpeed() {
+        return EverydayWindSpeed;
+    }
+
+    public void setEverydayWindSpeed(String everydayWindSpeed) {
+        EverydayWindSpeed = everydayWindSpeed;
+    }
 
     public String getEverydayDate() {
         return EverydayDate;
@@ -136,17 +167,6 @@ public class EverydayWeatherModel {
 
     public void setEverydayTempF(String everydayTempF) {
         EverydayTempF = everydayTempF;
-    }
-
-
-    public EverydayWeatherModel() {
-    }
-
-    public EverydayWeatherModel(String sunRise, String sunSet, String moonRise, String moonSet) {
-        this.sunRise = sunRise;
-        this.sunSet = sunSet;
-        this.moonRise = moonRise;
-        this.moonSet = moonSet;
     }
 
     public String getSunRise() {

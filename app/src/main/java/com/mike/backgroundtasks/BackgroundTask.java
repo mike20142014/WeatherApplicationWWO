@@ -1,20 +1,25 @@
+/*
 package com.mike.backgroundtasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.mike.app.MainActivity;
 import com.mike.utils.HttpConnection;
 
+*/
 /**
  * Created by MichaelHenry on 4/15/14.
- */
+ *//*
+
 public class BackgroundTask extends AsyncTask<String, String, String> {
     String SomeURL;
     HttpConnection mHttpConnection;
     ProgressDialog pDialog;
     Context mContext;
     private int mProgressStatus = 0;
+    MainActivity mainContext;
 
     public BackgroundTask() {
     }
@@ -43,7 +48,9 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
     protected String doInBackground(String... params) {
 
         mHttpConnection = new HttpConnection();
-        mHttpConnection.HttpConnectionUTIL(SomeURL);
+        mainContext = new MainActivity();
+        mainContext.getCurrentCondition(SomeURL);
+        //mHttpConnection.HttpConnectionUTIL(SomeURL);
         //return downloadBitmap(SomeURL);
 
         return null;
@@ -64,3 +71,4 @@ public class BackgroundTask extends AsyncTask<String, String, String> {
 }
 
 
+*/
