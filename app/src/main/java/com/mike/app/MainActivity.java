@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,10 +20,12 @@ import android.widget.Toast;
 import com.mike.models.CurrentConditionModel;
 import com.mike.models.EverydayWeatherModel;
 import com.mike.utilimages.ImageLoader;
-import com.mike.utils.HttpConnection;
+import com.mike.utilimages.HttpConnection;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 /**
  * Created by MichaelHenry on 4/14/14.
@@ -37,7 +42,7 @@ public class MainActivity extends Activity {
     public static final String SeventhPartApiKey = "8ecy7xxhuk7ydj2hqp6wstuy";
 
     public TextView Feels_Like, Temp_F, Wind_Speed, Observation_Time, Humidity, Wind_Direction, Weather_Description;
-    public ImageView weatherImage;
+    public ImageView weatherImage, day_night;
     public LinearLayout someBack;
 
     public String feelsLike;
@@ -49,8 +54,11 @@ public class MainActivity extends Activity {
     public String weather_description;
     public String mainWeatherURL;
 
+    public String[] weatherCodes = {"395", "392", "389", "377", "374", "371", "368", "365", "362", "356", "353", "350", "338", "335", "332", "329", "326", "323", "320", "317", "314", "311", "308", "305", "302", "299", "296", "293", "284", "281", "266", "263", "260", "248", "230", "227", "200", "185", "182", "179", "176", "143", "122", "119", "116", "113"};
+
     String data;
     ImageLoader imageLoader;
+    Drawable drawable1;
 
     public static final String myDomainURL = "http://view-unlimited.com/jsontest/weatherjson";
     Context context;
@@ -66,6 +74,7 @@ public class MainActivity extends Activity {
 
         init();
 
+
         everydayWeatherModel = new EverydayWeatherModel(context);
         currentConditionModel = new CurrentConditionModel(context);
         //new BackgroundTask(this,myDomainURL).execute();
@@ -73,8 +82,12 @@ public class MainActivity extends Activity {
         mHttpConnection = new HttpConnection();
         if (mHttpConnection.isNetworkConnected(context)) {
 
-            Log.i("IS NETWORK : ", "YES");
-            new BackgroundTask(this, myDomainURL).execute();
+            if (isOnline()) {
+
+                Log.i("IS NETWORK : ", "YES");
+                new BackgroundTask(this, myDomainURL).execute();
+
+            }
 
         } else {
 
@@ -87,6 +100,7 @@ public class MainActivity extends Activity {
 
     }
 
+
     public void init() {
 
         Feels_Like = (TextView) findViewById(R.id.feelslikeTextView);
@@ -98,6 +112,7 @@ public class MainActivity extends Activity {
         Weather_Description = (TextView) findViewById(R.id.descriptionTextView);
         weatherImage = (ImageView) findViewById(R.id.current_weatherIconImageView);
         someBack = (LinearLayout) findViewById(R.id.someBackground);
+        day_night = (ImageView) findViewById(R.id.current_weatherIconImageViewDayNight);
 
     }
 
@@ -321,6 +336,18 @@ public class MainActivity extends Activity {
 
             mHttpConnection = new HttpConnection();
             getCurrentCondition(SomeURL);
+            //isOnline();
+            /*try{
+                if (InetAddress.getByName("google.com").isReachable(2000)){
+                    System.out.println("Internet available");
+                }
+                else{
+                    System.out.println("Internet Not available");
+                }
+            }catch (Exception e){
+
+                e.printStackTrace();
+            }*/
             //mHttpConnection.HttpConnectionUTIL(SomeURL);
             //return downloadBitmap(SomeURL);
 
@@ -338,13 +365,60 @@ public class MainActivity extends Activity {
             super.onPostExecute(result);
             setValuestoViews();
             imageLoader = new ImageLoader(context);
-            imageLoader.DisplayImage(mainWeatherURL, R.drawable.ic_launcher, weatherImage);
-            imageLoader.DisplayImage2(context, mainWeatherURL, R.drawable.ic_launcher, someBack);
 
+            //For layout background
+            //imageLoader.DisplayImage2(mainWeatherURL, R.drawable.ic_launcher, someBack);
+            //imageLoader.DisplayImage(mainWeatherURL, R.drawable.ic_launcher, weatherImage);
+
+
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.cloudy_day);
+            Bitmap icon2 = BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.cloudy_night);
+            /*
+            Bitmap icon1 = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888);
+
+            Canvas canvas = new Canvas(icon1);
+
+            drawable1.setBounds(0, 0, 200, 200);
+            drawable1.draw(canvas);*/
+
+            //Working
+
+            //BitmapDrawable d = new BitmapDrawable(icon);
+
+            //someBack.setBackgroundDrawable(d);
+
+            if (Arrays.asList(weatherCodes).contains("")) {
+
+
+            }
+
+            weatherImage.setImageBitmap(icon);
+            day_night.setImageBitmap(icon2);
 
             pDialog.dismiss();
         }
 
+    }
+
+    public Boolean isOnline() {
+        try {
+            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            int returnVal = p1.waitFor();
+            boolean reachable = (returnVal == 0);
+            if (reachable) {
+                System.out.println("Internet access");
+                return reachable;
+            } else {
+                System.out.println("No Internet access");
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

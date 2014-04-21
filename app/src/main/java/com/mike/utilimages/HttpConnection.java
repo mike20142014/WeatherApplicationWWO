@@ -1,4 +1,4 @@
-package com.mike.utils;
+package com.mike.utilimages;
 
 import android.content.Context;
 import android.graphics.Bitmap;

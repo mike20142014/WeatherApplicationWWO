@@ -1,13 +1,10 @@
 package com.mike.utilimages;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -42,8 +39,7 @@ public class ImageLoader {
         executorService = Executors.newFixedThreadPool(5);
     }
 
-    int stub_id =
-            R.drawable.ic_launcher;
+    int stub_id = R.drawable.ic_launcher;
 
 
     public void DisplayImage(String url, int loader, ImageView imageView) {
@@ -58,38 +54,49 @@ public class ImageLoader {
         }
     }
 
-    public void DisplayImage2(Context context, String url, int loader, LinearLayout linearLayout) {
+
+    public void DisplayImage2(String url, int loader, LinearLayout linearLayout) {
 
         imageViews2.put(linearLayout, url);
         Bitmap bitmap = memoryCache.get(url);
-        Drawable d = new BitmapDrawable(context.getResources(), bitmap);
+        //BitmapDrawable d = new BitmapDrawable(bitmap);
+        //Drawable d = new BitmapDrawable2(context.getResources(), bitmap);
 
 
-        if (d != null)
+        if (bitmap != null) {
 
+            System.out.println("DisplayImage2 not null");
+            BitmapDrawable d = new BitmapDrawable(bitmap);
+            //linearLayout.setBackgroundDrawable(d);
             linearLayout.setBackgroundDrawable(d);
-        else {
-            queuePhoto2(context, url, linearLayout);
+        } else {
+            System.out.println("DisplayImage2 null");
+            queuePhoto2(url, linearLayout);
+            //linearLayout.setBackgroundDrawable(d);
+            BitmapDrawable d = new BitmapDrawable(bitmap);
             linearLayout.setBackgroundDrawable(d);
         }
 
     }
 
-    public void setBackgroundLinearLayout(Context context, String url, int loader, LinearLayout someBackground) {
+
+    public void setBackgroundLinearLayout(String url, int loader, LinearLayout someBackground) {
 
         stub_id = loader;
         imageViews2.put(someBackground, url);
         Bitmap bitmap = memoryCache.get(url);
 
         if (bitmap != null) {
-
+            System.out.println("Bitmap not null");
             //BitmapDrawable mBitmapDrawable = new BitmapDrawable(bitmap);
-            Drawable d = new BitmapDrawable(context.getResources(), bitmap);
+            BitmapDrawable d = new BitmapDrawable(bitmap);
+            //Drawable d = new BitmapDrawable(context.getResources(), bitmap);
             someBackground.setBackgroundDrawable(d);
+            //someBackground.setBackgroundDrawable(d);
 
         } else {
 
-            queuePhoto2(context, url, someBackground);
+            queuePhoto2(url, someBackground);
         }
 
 
@@ -100,10 +107,10 @@ public class ImageLoader {
         executorService.submit(new PhotosLoader(p));
     }
 
-    private void queuePhoto2(Context context, String url, LinearLayout linearLayout) {
+    private void queuePhoto2(String url, LinearLayout linearLayout) {
 
         PhotoToLoad2 p = new PhotoToLoad2(url, linearLayout);
-        executorService.submit(new PhotosLoader2(context, p));
+        executorService.submit(new PhotosLoader2(p));
 
     }
 
@@ -213,12 +220,11 @@ public class ImageLoader {
 
     class PhotosLoader2 implements Runnable {
 
-        Context context1;
+
         PhotoToLoad2 photoToLoad2;
 
-        PhotosLoader2(Context context, PhotoToLoad2 photoToLoad2) {
+        PhotosLoader2(PhotoToLoad2 photoToLoad2) {
 
-            this.context1 = context;
             this.photoToLoad2 = photoToLoad2;
 
         }
@@ -234,7 +240,7 @@ public class ImageLoader {
             if (imageViewReused2(photoToLoad2))
                 return;
 
-            BitmapDisplayer2 bd = new BitmapDisplayer2(context1, bmp, photoToLoad2);
+            BitmapDisplayer2 bd = new BitmapDisplayer2(bmp, photoToLoad2);
             Activity a = (Activity) photoToLoad2.mlinearLayout.getContext();
             a.runOnUiThread(bd);
 
@@ -271,10 +277,13 @@ public class ImageLoader {
         public void run() {
             if (imageViewReused(photoToLoad))
                 return;
-            if (bitmap != null)
+            if (bitmap != null) {
+                System.out.println("BitmapDisplayer not null");
                 photoToLoad.imageView.setImageBitmap(bitmap);
-            else
+            } else {
+                System.out.println("BitmapDisplayer null");
                 photoToLoad.imageView.setImageResource(stub_id);
+            }
         }
     }
 
@@ -282,30 +291,34 @@ public class ImageLoader {
 
         Bitmap bitmap;
         PhotoToLoad2 photoToLoad2;
-        Context context1;
-        Resources resources;
-        Drawable d, stub;
+        //Resources resources;
+        //Drawable d, stub;
+        //BitmapDrawable d;
 
-        public BitmapDisplayer2(Context context, Bitmap b, PhotoToLoad2 p) {
+        public BitmapDisplayer2(Bitmap b, PhotoToLoad2 p) {
 
             bitmap = b;
             photoToLoad2 = p;
-            context1 = context;
             //resources = context1.getResources();
-            d = new BitmapDrawable(context1.getResources(), bitmap);
+            //d = new BitmapDrawable(context1.getResources(), bitmap);
 
         }
 
-        @SuppressLint("NewApi")
         @Override
         public void run() {
 
             if (imageViewReused2(photoToLoad2))
                 return;
-            if (bitmap != null)
-                photoToLoad2.mlinearLayout.setBackground(d);
-            else
-                photoToLoad2.mlinearLayout.setBackground(d);
+            if (bitmap != null) {
+                System.out.println("BitmapDisplayer2 not null");
+                BitmapDrawable d = new BitmapDrawable(bitmap);
+
+                photoToLoad2.mlinearLayout.setBackgroundDrawable(d);
+            } else {
+                System.out.println("BitmapDisplayer2 null");
+                BitmapDrawable d = new BitmapDrawable(bitmap);
+                photoToLoad2.mlinearLayout.setBackgroundDrawable(d);
+            }
         }
     }
 

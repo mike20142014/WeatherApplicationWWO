@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.mike.app.MainActivity;
-import com.mike.utils.HttpConnection;
+import com.mike.utilimages.HttpConnection;
 
 */
 /**
