@@ -1,8 +1,10 @@
 package com.mike.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,12 +21,16 @@ import android.widget.Toast;
 
 import com.mike.models.CurrentConditionModel;
 import com.mike.models.EverydayWeatherModel;
-import com.mike.utilimages.ImageLoader;
 import com.mike.utilimages.HttpConnection;
+import com.mike.utilimages.ImageLoader;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 
 /**
@@ -44,6 +50,8 @@ public class MainActivity extends Activity {
     public TextView Feels_Like, Temp_F, Wind_Speed, Observation_Time, Humidity, Wind_Direction, Weather_Description;
     public ImageView weatherImage, day_night;
     public LinearLayout someBack;
+    HttpURLConnection urlConnection;
+    Process p1;
 
     public String feelsLike;
     public String temp_F;
@@ -66,6 +74,8 @@ public class MainActivity extends Activity {
     EverydayWeatherModel everydayWeatherModel;
     CurrentConditionModel currentConditionModel;
 
+    public static final String GoogleURL = "http://www.google.com";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +84,14 @@ public class MainActivity extends Activity {
 
         init();
 
+        //new TestConnection(context,GoogleURL).execute();
+
+        ExecuteAsyncTask();
+
+
+    }
+
+    private void ExecuteAsyncTask() {
 
         everydayWeatherModel = new EverydayWeatherModel(context);
         currentConditionModel = new CurrentConditionModel(context);
@@ -91,15 +109,41 @@ public class MainActivity extends Activity {
 
         } else {
 
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setTitle("Connection Error");
+            dialog.setMessage("No Internet access!");
+            dialog.setPositiveButton("Ok", null);
+            dialog.setNegativeButton("Try again", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
+                    ExecuteAsyncTask();
+
+                }
+            });
+            AlertDialog alert = dialog.create();
+            alert.setCancelable(false);
+            alert.show();
             Log.i("IS NETWORK : ", "NO");
             return;
 
         }
 
-
     }
 
+    private String readStream(InputStream is) {
+        try {
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            int i = is.read();
+            while (i != -1) {
+                bo.write(i);
+                i = is.read();
+            }
+            return bo.toString();
+        } catch (IOException e) {
+            return "";
+        }
+    }
 
     public void init() {
 
@@ -278,6 +322,12 @@ public class MainActivity extends Activity {
 
     public void getHourlyForecast(String weatherURL) {
 
+
+        if (Arrays.asList(weatherCodes).contains("")) {
+
+
+        }
+
         try {
             JSONObject mainJSONObject = new JSONObject(mHttpConnection.loadJSONFromAsset(weatherURL));
             JSONArray weatherJSONOArray = mainJSONObject.getJSONObject("data").getJSONArray("current_condition");
@@ -336,19 +386,7 @@ public class MainActivity extends Activity {
 
             mHttpConnection = new HttpConnection();
             getCurrentCondition(SomeURL);
-            //isOnline();
-            /*try{
-                if (InetAddress.getByName("google.com").isReachable(2000)){
-                    System.out.println("Internet available");
-                }
-                else{
-                    System.out.println("Internet Not available");
-                }
-            }catch (Exception e){
 
-                e.printStackTrace();
-            }*/
-            //mHttpConnection.HttpConnectionUTIL(SomeURL);
             //return downloadBitmap(SomeURL);
 
             return null;
@@ -389,11 +427,6 @@ public class MainActivity extends Activity {
 
             //someBack.setBackgroundDrawable(d);
 
-            if (Arrays.asList(weatherCodes).contains("")) {
-
-
-            }
-
             weatherImage.setImageBitmap(icon);
             day_night.setImageBitmap(icon2);
 
@@ -404,22 +437,101 @@ public class MainActivity extends Activity {
 
     public Boolean isOnline() {
         try {
-            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
             int returnVal = p1.waitFor();
             boolean reachable = (returnVal == 0);
             if (reachable) {
+
                 System.out.println("Internet access");
                 return reachable;
             } else {
+
                 System.out.println("No Internet access");
             }
 
         } catch (Exception e) {
 
             e.printStackTrace();
+        } finally {
+            p1.destroy();
         }
         return false;
     }
+
+    public class TestConnection extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog pDialog;
+        Context context;
+        String URL;
+
+        public TestConnection(Context context, String URL) {
+            super();
+            this.context = context;
+            this.URL = URL;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            super.onPreExecute();
+            pDialog = new ProgressDialog(context);
+            pDialog.setMessage("Testing Connection...");
+            pDialog.setIndeterminate(true);
+            pDialog.setMax(100);
+            pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            //openHttpConnection(URL);
+            //Do some method
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            pDialog.dismiss();
+        }
+    }
+
+    /*public void openHttpConnection(String URL) {
+
+        InputStream in = null;
+        int resCode = -1;
+
+        try {
+            URL url = new URL(URL);
+            URLConnection urlConn = url.openConnection();
+
+            if (!(urlConn instanceof HttpURLConnection)) {
+                throw new IOException ("URL is not an Http URL");
+            }
+
+            HttpURLConnection httpConn = (HttpURLConnection)urlConn;
+            httpConn.setAllowUserInteraction(false);
+            httpConn.setInstanceFollowRedirects(true);
+            httpConn.setRequestMethod("GET");
+            httpConn.connect();
+
+            resCode = httpConn.getResponseCode();
+            if (resCode == HttpURLConnection.HTTP_OK) {
+                System.out.println("Connection OK");
+                in = httpConn.getInputStream();
+            }else{
+                System.out.println("No Data Connection");
+            }
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
